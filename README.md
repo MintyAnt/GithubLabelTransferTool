@@ -1,4 +1,11 @@
 
+Provides a simple tool to aid in copying github labels from one source rep to other target repos.
+
+## Running
+
+1. Install `npm`, `yeoman` https://yeoman.io/
+2. From source folder run `yo github-label-transfer`
+3. Follow prompts
 
 ## Actions
 
