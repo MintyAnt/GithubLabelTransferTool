@@ -1,14 +1,17 @@
-'use strict'
-
-// import * as GithubClient from './generators/app/GithubClient.js'
-var GithubClient = require('./GithubClient.js');
-var Generator = require('yeoman-generator');
-var GithubValidator = require('./GithubValidator');
-
-let sourceRepo = "";
-let targetRepos = [];
+require('dotenv').config();
+const Generator = require('yeoman-generator');
+const GithubClient = require('./GithubClient.js');
+const GithubValidator = require('./GithubValidator');
 
 module.exports = class extends Generator {
+  constructor(args, opts) {
+    super(args, opts);
+
+    this.sourceRepo = {};
+    this.targetRepos = [];
+    this.labelsToCopy = [];
+  }
+
   async prompting () {
     const sourceRepoAnswer = await this.prompt([
       {
@@ -19,7 +22,7 @@ module.exports = class extends Generator {
     ])
     this.sourceRepo = GithubValidator.validateRepoUrl(sourceRepoAnswer.sourceRepo);
 
-    var moreInput = true;
+    let moreInput = true;
     while (moreInput) {
       const targetRepoAnswer = await this.prompt([
           {
@@ -31,17 +34,16 @@ module.exports = class extends Generator {
 
       if (targetRepoAnswer.targetRepo) {
         const targetRepo = GithubValidator.validateRepoUrl(targetRepoAnswer.targetRepo);
-        targetRepos.push(targetRepo);
+        this.targetRepos.push(targetRepo);
       } else {
         moreInput = false;
       }
     }
 
-    const githubClient = new GithubClient();
-    const labelsResult = await githubClient.getLabels(this.sourceRepo);
+    const labelsResult = await GithubClient.getLabels(this.sourceRepo);
 
-    const labelOptions = labelsResult.body.map(labelOption => labelOption.name);
-    this.labelAnswer = await this.prompt([
+    const labelOptions = labelsResult && labelsResult.body && labelsResult.body.map(labelOption => labelOption.name);
+    const labelAnswer = await this.prompt([
       {
         type: 'checkbox',
         name: 'labels',
@@ -51,36 +53,35 @@ module.exports = class extends Generator {
     ])
 
     this.labelsToCopy = labelsResult.body.filter(
-      labelOption => this.labelAnswer.labels.includes(labelOption.name)
+      labelOption => labelAnswer.labels.includes(labelOption.name)
     );
 
-    this.log('Source repo: ');
-    this.log(this.sourceRepo);
-    this.log('Target repos: ', targetRepos);
-    this.log('Labels to copy: ', this.labelAnswer.labels);
-    this.log('Labels to copy2: ', this.labelsToCopy);
+    console.log('Source repo: ');
+    console.log(this.sourceRepo);
+    console.log('Target repos: ', this.targetRepos);
+    console.log('Labels to copy: ', labelAnswer.labels);
+    console.log('Labels to copy2: ', this.labelsToCopy);
   }
 
   copyLabels () {
-    const githubClient = new GithubClient();
-    
-    this.log('Target repos: ', targetRepos);
+    console.log('Target repos: ', this.targetRepos);
 
-    for (let targetRepo in targetRepos) {
-      this.log('Performing updates on ', targetRepo);
-      githubClient.getLabels(targetRepo).then(
+    for (const targetRepo of this.targetRepos) {
+      console.log('Performing updates on ', targetRepo);
+      GithubClient.getLabels(this.sourceRepo, targetRepo).then(
         targetLabelsResp => {
-          for (let labelToCopy in this.labelsToCopy) {
+          for (const labelToCopy of this.labelsToCopy) {
+            console.log('Copying label: ', labelToCopy);
             const existingLabel = targetLabelsResp.body.find(labelResp => labelResp.name == labelToCopy);
             if (!existingLabel) {
               // create
-              githubClient.createLabel(labelToCopy);
+              GithubClient.createLabel(targetRepo, labelToCopy);
             } else if (existingLabel.color != labelToCopy.color || existingLabel.description != labelToCopy.description) {
               // update
-              githubClient.updateLabel(labelToCopy);
+              GithubClient.updateLabel(targetRepo, labelToCopy);
             } else {
               // no update
-              this.log("Nothing to update for ", existingLabel.name);
+              console.log("Nothing to update for ", existingLabel.name);
             }
           }
         }

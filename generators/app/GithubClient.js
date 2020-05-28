@@ -1,48 +1,48 @@
-'use strict'
+const superagent = require('superagent');
 
-const superagent = require('superagent')
+const GITHUB_TOKEN = process.env.GITHUB_ACCESS_TOKEN;
+const GITHUB_API_URL = '/api/v3';
+const GITHUB_API_VERSION = 'application/vnd.github.v3+json';
 
-const githubPersonalAccessToken = 'doot'
-
-module.exports = class GithubClient {
-  constructor () {
-  }
-
-  getLabels(url) {
-    const api = `${this.baseUrl(url.baseUrl)}/repos/${url.owner}/${url.repo}/labels`;
+const getLabels = (url) => {
+    const api = `${url.host}${GITHUB_API_URL}/repos/${url.owner}/${url.repo}/labels`;
     return superagent.get(api)
-      .set('Accept', 'application/json')
-      .set('Authorization', `token ${githubPersonalAccessToken}`)
-      .catch(err => console.log(err.response));
-  }
+      .set('Accept', GITHUB_API_VERSION)
+      .set('User-Agent', 'superagent')
+      .set('Authorization', `token ${GITHUB_TOKEN}`)
+      .catch(err => console.log(err));
+  };
 
-  createLabel(label) {
-    const api = `${this.baseUrl(url.baseUrl)}/repos/${url.owner}/${url.repo}/labels`;
+const createLabel = (url, label) => {
+    const api = `${url.host}${GITHUB_API_URL}/repos/${url.owner}/${url.repo}/labels`;
     return superagent.post(api)
-      .set('Accept', 'application/json')
-      .set('Authorization', `token ${githubPersonalAccessToken}`)
+      .set('Accept', GITHUB_API_VERSION)
+      .set('User-Agent', 'superagent')
+      .set('Authorization', `token ${GITHUB_TOKEN}`)
       .send({
         name: label.name,
         color: label.color,
         description: label.description
       })
-      .catch(err => console.log(err.response));
-  }
+      .catch(err => console.log(err));
+  };
 
-  updateLabel(labelUpdate) {
-    const api = `${this.baseUrl(url.baseUrl)}/repos/${url.owner}/${url.repo}/labels/${labelUpdate.name}`;
+const updateLabel = (url, labelUpdate) => {
+    const api = `${url.host}${GITHUB_API_URL}/repos/${url.owner}/${url.repo}/labels/${labelUpdate.name}`;
     return superagent.patch(api)
-      .set('Accept', 'application/json')
-      .set('Authorization', `token ${githubPersonalAccessToken}`)
+      .set('Accept', GITHUB_API_VERSION)
+      .set('User-Agent', 'superagent')
+      .set('Authorization', `token ${GITHUB_TOKEN}`)
       .send({
         //new_name: labelUpdate.name,
         color: labelUpdate.color,
         description: labelUpdate.description
       })
-      .catch(err => console.log(err.response));
-  }
+      .catch(err => console.log(err));
+  };
 
-  baseUrl(url) {
-    return `${url}/api/v3`;
-  }
+module.exports = {
+  getLabels,
+  createLabel,
+  updateLabel,
 }
