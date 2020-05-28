@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "start": "yo ./generators/app/index.js",
+    "start": "yo github-label-transfer",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
@@ -16,7 +16,7 @@
     "dotenv": "^8.2.0",
     "inquirer": "^7.0.0",
     "superagent": "^5.1.0",
-    "yeoman-generator": "^1.0.0",
+    "yeoman-generator": "^1.1.1",
     "yo": "^3.1.1"
   }
 }
