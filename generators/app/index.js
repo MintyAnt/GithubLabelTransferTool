@@ -68,15 +68,19 @@ module.exports = class extends Generator {
 
     for (const targetRepo of this.targetRepos) {
       console.log('Performing updates on ', targetRepo);
-      GithubClient.getLabels(this.sourceRepo, targetRepo).then(
+      GithubClient.getLabels(targetRepo).then(
         targetLabelsResp => {
           for (const labelToCopy of this.labelsToCopy) {
             console.log('Copying label: ', labelToCopy);
-            const existingLabel = targetLabelsResp.body.find(labelResp => labelResp.name == labelToCopy);
+
+            const existingLabel = targetLabelsResp.body.find(
+              labelResp => 
+                labelResp.name.toUpperCase() == labelToCopy.name.toUpperCase()
+              );
             if (!existingLabel) {
               // create
               GithubClient.createLabel(targetRepo, labelToCopy);
-            } else if (existingLabel.color != labelToCopy.color || existingLabel.description != labelToCopy.description) {
+            } else if (existingLabel.name != labelToCopy.name || existingLabel.color != labelToCopy.color || existingLabel.description != labelToCopy.description) {
               // update
               GithubClient.updateLabel(targetRepo, labelToCopy);
             } else {

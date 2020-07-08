@@ -34,7 +34,7 @@ const updateLabel = (url, labelUpdate) => {
       .set('User-Agent', 'superagent')
       .set('Authorization', `token ${GITHUB_TOKEN}`)
       .send({
-        //new_name: labelUpdate.name,
+        new_name: labelUpdate.name,
         color: labelUpdate.color,
         description: labelUpdate.description
       })
