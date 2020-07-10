@@ -6,12 +6,12 @@ const copyLabels = (targetRepos, labelsToCopy) => {
   for (const targetRepo of targetRepos) {
     console.log('Performing updates on ', targetRepo);
     GithubClient.getLabels(targetRepo).then(
-      targetLabelsResp => copyLabelsForRepo(targetLabelsResp, labelsToCopy)
+      targetLabelsResp => copyLabelsForRepo(targetLabelsResp, labelsToCopy, targetRepo)
     );
   }
 };
 
-const copyLabelsForRepo = (targetLabelsResp, labelsToCopy) => {
+const copyLabelsForRepo = (targetLabelsResp, labelsToCopy, targetRepo) => {
   for (const labelToCopy of labelsToCopy) {
     console.log('Copying label: ', labelToCopy);
 
