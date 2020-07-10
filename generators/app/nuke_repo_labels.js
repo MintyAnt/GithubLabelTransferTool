@@ -2,14 +2,27 @@ require('dotenv').config();
 const GithubClient = require('./GithubClient.js');
 const GithubValidator = require('./GithubValidator');
 
+const targetRepoUrl = "<github repo url here>";
+const labelsToIgnore = [
+  "deployed-PROD",
+  "deployed-QA"
+];
+
 const run = () => {
   const targetRepo = GithubValidator.validateRepoUrl(targetRepoUrl);
 
   GithubClient.getLabels(targetRepo).then(
     targetLabelsResp => {
+        
       const labelNames = targetLabelsResp.body.map(labelOption => labelOption.name)
       for (const labelToDelete of labelNames) {
-        GithubClient.deleteLabel(targetRepo, labelToDelete);
+        const labelInSkipList = labelsToIgnore.find(
+          ignoreLabel => ignoreLabel.toUpperCase() == labelToDelete.toUpperCase()
+        );
+
+        if (!labelInSkipList) {
+          GithubClient.deleteLabel(targetRepo, labelToDelete);
+        }
       }
     }
   )

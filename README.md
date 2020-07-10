@@ -26,4 +26,5 @@ Provides a simple tool to aid in copying github labels from one source rep to ot
 
 ### Clearing repo of labels
 1. Modify `nuke_repo_labels.js` to point to target repo
-2. Run `node generators/app/nuke_repo.js`
+2. Verify the labels to ignore look good
+3. Run `node generators/app/nuke_repo_labels.js`
