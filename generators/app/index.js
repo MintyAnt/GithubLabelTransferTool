@@ -2,6 +2,7 @@ require('dotenv').config();
 const Generator = require('yeoman-generator');
 const GithubClient = require('./GithubClient.js');
 const GithubValidator = require('./GithubValidator');
+const LabelTransferService = require('./LabelTransferService');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -55,56 +56,9 @@ module.exports = class extends Generator {
     this.labelsToCopy = labelsResult.body.filter(
       labelOption => labelAnswer.labels.includes(labelOption.name)
     );
-
-    console.log('Source repo: ');
-    console.log(this.sourceRepo);
-    console.log('Target repos: ', this.targetRepos);
-    console.log('Labels to copy: ', labelAnswer.labels);
-    console.log('Labels to copy2: ', this.labelsToCopy);
   }
 
   copyLabels () {
-    console.log('Target repos: ', this.targetRepos);
-
-    for (const targetRepo of this.targetRepos) {
-      console.log('Performing updates on ', targetRepo);
-      GithubClient.getLabels(targetRepo).then(
-        targetLabelsResp => {
-          for (const labelToCopy of this.labelsToCopy) {
-            console.log('Copying label: ', labelToCopy);
-
-            const existingLabel = targetLabelsResp.body.find(
-              labelResp => 
-                labelResp.name.toUpperCase() == labelToCopy.name.toUpperCase()
-              );
-            if (!existingLabel) {
-              // create
-              GithubClient.createLabel(targetRepo, labelToCopy);
-            } else if (existingLabel.name != labelToCopy.name || existingLabel.color != labelToCopy.color || existingLabel.description != labelToCopy.description) {
-              // update
-              GithubClient.updateLabel(targetRepo, labelToCopy);
-            } else {
-              // no update
-              console.log("Nothing to update for ", existingLabel.name);
-            }
-          }
-        }
-      );
-    }
-  }
-
-  inputSourceRepo () {
-  }
-
-  inputTargetRepos () {
-
-  }
-
-  selectSourceLabels () {
-
-  }
-
-  executeLabelCopy () {
-
+    LabelTransferService.copyLabels(this.targetRepos, this.labelsToCopy);
   }
 }
