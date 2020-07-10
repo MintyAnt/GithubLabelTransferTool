@@ -41,8 +41,18 @@ const updateLabel = (url, labelUpdate) => {
       .catch(err => console.log(err));
   };
 
+const deleteLabel = (url, labelToDeleteName) => {
+  const api = `${url.host}${GITHUB_API_URL}/repos/${url.owner}/${url.repo}/labels/${labelToDeleteName}`;
+  return superagent.delete(api)
+    .set('Accept', GITHUB_API_VERSION)
+    .set('User-Agent', 'superagent')
+    .set('Authorization', `token ${GITHUB_TOKEN}`)
+    .catch(err => console.log(err));
+}
+
 module.exports = {
   getLabels,
   createLabel,
   updateLabel,
+  deleteLabel,
 }
