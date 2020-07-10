@@ -2,10 +2,11 @@ require('dotenv').config();
 const GithubClient = require('./GithubClient.js');
 const GithubValidator = require('./GithubValidator');
 
-const targetRepoUrl = "<github repo url here>";
+const targetRepoUrl = "";
 const labelsToIgnore = [
   "deployed-PROD",
-  "deployed-QA"
+  "deployed-QA",
+  "Epic",
 ];
 
 const run = () => {
