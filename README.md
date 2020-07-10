@@ -23,3 +23,7 @@ Provides a simple tool to aid in copying github labels from one source rep to ot
 4. Perform copy on each repo
     a. If label does not exist, create
     b. If label exists, and is not to spec, update
+
+### Clearing repo of labels
+1. Modify `nuke_repo_labels.js` to point to target repo
+2. Run `node generators/app/nuke_repo.js`
