@@ -7,22 +7,20 @@ Provides a simple tool to aid in copying github labels from one source rep to ot
 2. Run `npm install`
 3. From source folder run `cp .env-template .env`
 4. Obtain a [personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
-5. Update `.env` with your token
+5. Use the `repo` scopes
+6. Update `.env` with your token
 
 ## Running
 
-1. From source folder run `yo github-label-transfer`
+1. From source folder run `npm start`
 2. Follow prompts
 
 ## Actions
 
 ### Copy Labels
-1. Ask for Source repo
-2. List labels, and select all you want to copy
-3. Ask for destination repos, `null` to end entry
-4. Perform copy on each repo
-    a. If label does not exist, create
-    b. If label exists, and is not to spec, update
+1. Enter source repo (full url)
+2. Select all labels you want to copy
+3. Enter destination repo(s)
 
 ### Clearing repo of labels
 1. Modify `nuke_repo_labels.js` to point to target repo
